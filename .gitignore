@@ -1,0 +1,59 @@
+# Python virtual environment
+venv/
+env/
+.venv/
+.env
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Logs
+*.log
+data/logs/*.log
+
+# Environment and sensitive files
+.env
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Output data files (optional, depending on your preference)
+data/brand_output.json
+
+# Temporary files
+*.tmp
+*.bak
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Pytest
+.pytest_cache/
+
+# Coverage reports
+.coverage
+htmlcov/ 
