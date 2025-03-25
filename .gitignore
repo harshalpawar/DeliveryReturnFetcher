@@ -41,9 +41,6 @@ Thumbs.db
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# Output data files (optional, depending on your preference)
-data/brand_output.json
-
 # Temporary files
 *.tmp
 *.bak
