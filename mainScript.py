@@ -1,9 +1,8 @@
 import argparse, json, sys, os
 from src import search, scrape, response
-from loguru import logger
 from paths import BRAND_INPUT_JSON, BRAND_OUTPUT_JSON
+from logging_config import log as logger
 
-logger.add("logs/pipeline.log", rotation="500 MB", level="INFO")
 # parse arguments from command line
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Extract policy information from fashion brands in India")
@@ -69,7 +68,9 @@ def process_brands(brands, existing_data, args):
 def load_data(input_file, output_file):
     try:
         with open(input_file, "r") as f:
-            brands = json.load(f)
+            # Convert list of dictionaries to a single dictionary
+            brands_data = json.load(f)
+            brands = {list(brand.keys())[0]: list(brand.values())[0] for brand in brands_data["brands"]}
     except Exception as e:
         logger.error(f"Error loading {input_file}: {e}")
         sys.exit(1)

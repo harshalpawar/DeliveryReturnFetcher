@@ -1,6 +1,14 @@
 {
-    "Example Brand": "example.com",
-    "Example Brand 2": "example2.com",
-    "Example Brand 3": "example3.com",
-    "Example Brand 4": "example4.com"
+    "brands": [
+        {"H&M": "www2.hm.com/en_in/"},
+        {"Zara": "zara.com/in/"},
+        {"Nike": "nike.com/in/"},
+        {"Adidas": "adidas.co.in/"},
+        {"Levi's": "levi.in/"},
+        {"Myntra": "myntra.com/"},
+        {"Ajio": "ajio.com/"},
+        {"Uniqlo": "uniqlo.com/in/en/"},
+        {"Jack & Jones": "jackjones.in/"},
+        {"Vero Moda": "veromoda.in/"}
+    ]
 }

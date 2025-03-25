@@ -17,6 +17,7 @@ build/
 # Logs
 *.log
 data/logs/*.log
+logs/*.log
 
 # Environment and sensitive files
 .env

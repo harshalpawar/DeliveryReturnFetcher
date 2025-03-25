@@ -1,12 +1,32 @@
 # Search keywords
 SEARCH_KEYWORDS = {
-    "delivery": "delivery shipping charges",
-    "returns": "returns refund exchange pickup"
+    "delivery": "delivery+shipping+charges",
+    "returns": "returns+refund+exchange"
 }
 
+# Jina Reader Configuration
+def JINA_READER_HEADERS(api_key):
+    return {
+        'Accept': 'application/json',
+        'Authorization': f'Bearer {api_key}',
+        'X-Md-Link-Style': 'referenced',
+        'X-Retain-Images': 'none', 
+        'X-Return-Format': 'text',
+        'X-With-Images-Summary': 'all',
+        'X-With-Links-Summary': 'all'
+    }
+# Jina Search Configuration
+def JINA_SEARCH_HEADERS(api_key, brand_domain):
+    return {
+        "Accept": "application/json",
+        "Authorization": f"Bearer {api_key}",
+        "X-Respond-With": "no-content",
+        "X-Site": brand_domain
+    }
 # Gemini Configuration
 
 # Prompts
+# TODO: modify the prompt
 GEMINI_SYSTEM_PROMPT = """Your purpose is to extract the delivery and return policy of a fashion brand in India.
 
     📌 **RESPONSE FORMAT (Strictly follow this structure):**
