@@ -1,0 +1,86 @@
+NEW PROJECT PLAN
+Prioritized Refinements (Based on Urgency):
+
+P0 - Must Do Immediately:
+Set up project structure
+Implement loguru logging in mainScript.py
+Implement aggressive error handling in mainScript.py
+Create brand_input.json with the most important brands (based on your manager's feedback)
+Test mainScript.py to call search.py and log the returned links
+P1 - High Priority (After P0):
+Implement functions in search.py, scrape.py, clean.py, response.py.
+Complete functions in mainScript.py
+Implement clean.py (prioritizing key cleaning tasks)
+Implement time.sleep(x) for rate limiting (if necessary)
+Implement simple retries
+Update Gemini prompt to follow structured output and request snippets
+Test the pipeline end-to-end on a small subset of brands (3-5) and manually verify the results
+P2 - Low Priority (If Time Allows):
+Implement Brave Search (if Jina Search is subpar)
+Implement parallel workers (for faster processing)
+Address memory usage issues (if they arise)
+project structure
+
+
+modules (py files here only contain functions/objects which I'll import)
+    search.py (make call to Jina Search)
+    scrape.py (make call to Jina Reader)
+    clean.py (my own cleaning, chunking & positioning functions)
+    response.py (make call to Gemini for final response and write to output json)
+config.py (jina config, gemini config, search keywords, prompt)
+.env (API keys)
+mainScript.py (orchestrate the full data pipe, try/except and log all intermeditate steps)
+data
+    brand_input.json
+    brand_output.json
+logs
+    <error logs here>
+    
+    
+brand_input.json
+{
+    brand : {name : "H&M", domain : "www2.hm.com/en_in"},
+    ...
+}
+
+brand_output.json 
+{
+    brand : {name : "H&M", domain : "www2.hm.com/en_in", reponse : <final response from Gemini>},
+    ...
+}
+Use loguru
+No logging and error handling inside modules unless necessary. Modules are simple. Every function only does 1 thing.
+All control should be centralised in mainScript.py. Log everything, handle all errors here.
+Figure out what clean.py will do exactly (will do after I have the rest of the setup ready)
+Implement 
+    error handling
+    logging (all intermediate data and any errors)
+    don't redo brands that have outputs already
+    Brave search if Jina search is subpar (forget this for now)
+    request rotation (just use time.sleep(x) for now)
+    retries
+    parallel workers (later)
+    
+Update Gemini prompt to follow this structured output 
+"H&M": {
+        "name": "H&M",
+        "domain": "www2.hm.com/en_in",
+        "delivery_charges": "₹199",
+        "delivery_time": "3-7 business days",
+        "return_period": "30 days",
+        "refund_method": "Original method of payment"
+    }
+Ask gemini to return snippets from which it extracted this^ info. Also return any additional info that's relevant but doesn't fit the schema. This will make final stage debugging way easier.
+
+3. Memory Concerns: 10 Pages of Data to Gemini?
+
+Potential Issue: Yes, there's a potential for memory issues if you're assigning 10 pages of data to a single variable before passing it to Gemini.
+Factors:
+Page Size: How large are these pages? (Kilobytes? Megabytes?)
+Data Structure: How are you storing the page data? (Strings? Lists? Dictionaries?)
+System Memory: How much memory does your machine have?
+Mitigation Strategies:
+Chunking: If the pages are very large, consider breaking them down into smaller chunks before passing them to Gemini. You're already planning to do this in clean.py, so this is a natural fit.
+Streaming: If you're scraping the pages directly from the web, consider using a streaming approach to avoid loading the entire page into memory at once.
+Garbage Collection: Ensure that you're not holding onto unnecessary data in memory.
+Recommendation: Monitor your memory usage as you're testing the pipeline. If you start to see memory issues, implement one of the mitigation strategies above. I think it won't be a big deal.

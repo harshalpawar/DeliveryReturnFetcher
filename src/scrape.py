@@ -18,9 +18,12 @@ def jina_reader(urls):
         raise ValueError("No URLs provided to scrape.")
     
     JINA_API_KEY = os.getenv("JINA_API_KEY")
-    
-    # Prepare API headers
     headers = JINA_READER_HEADERS(JINA_API_KEY)
+    # Prepare API headers
+    # jina_reader_config = JINA_READER_CONFIG(JINA_API_KEY, urls)
+    # url = jina_reader_config['url']
+    # headers = jina_reader_config['headers']
+    # data = jina_reader_config['data']
     
     # List to store all scraped content
     all_content = []
@@ -33,15 +36,16 @@ def jina_reader(urls):
     # TODO: add parallel requests
     for url in urls:
         try:
-            response = requests.get(f'https://r.jina.ai/{url}', headers=headers)
+            response = requests.get(f"https://r.jina.ai/{url}", headers=headers)
+            logger.info(f"Response: {response.text}")
         except Exception as e:
             logger.error(f"Error scraping {url}: {e}")
             continue
-
+        
         try:
-            response_json = response.json()
-            text_content = response_json['data']['text']
-            all_content.append(f"URL: {url}\n\nContent:\n{text_content}\n\n") 
+            #response_json = response.json()
+            #text_content = response_json['data']['text']
+            all_content.append(f"URL: {url}\n\nContent:\n{response.text}\n\n") 
         except (KeyError, json.JSONDecodeError) as e:
             all_content.append(f"URL: {url}\n\nError extracting content: {str(e)}\n\n")
             logger.error(f"Error extracting content: {str(e)}") 

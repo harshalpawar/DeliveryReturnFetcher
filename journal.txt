@@ -1,0 +1,36 @@
+New problems
+r.jina.ai/hm.com finds Free shipping above ₹1999
+but it's not in my scraped data
+The links themselves are bad - this means jina search is bad! I need to try with brave.
+
+For nike - jina finds ₹ 1 250.00 for all orders but gemini doesn't
+This is a known issue. I need to prompt better and write clean.py
+
+Scraped data have to go in a different data file because they fuck up my logs
+It's 100% jina search issue, basically the keywords that work for hm don't work for nike and vice versa
+I checked and brave works well for both nike and hm
+
+Another problem is that nike declares a different delivery time on their policy page and product pages so this will have to be handled by the prompt. Just return the standard response.
+
+The prompt will also need to handle memeberships. Ignore delivery and return info under memberships.
+
+TODO-
+[x] Check all files once
+Switch to Brave Search (Critical for search accuracy).
+Separate Scraped Data (Quick fix to clean up logs and I need them for clean.py).
+[x] Optimize Gemini Prompt and config (Improves extraction accuracy).
+    Also check out structured output and any other useful options in their docs
+[x] Optimize Jina config
+Include Home Page and Product Page (Some brands have the info here).
+Write clean.py (split scraped data into chunks and rank them by relevance)
+Do the 20 brand test (test on a diverse dataset)
+Run the Pipeline for 5 Brands (Deliver something tangible).
+
+Pages have a lot of noise and sites keep thinking I'm from the US
+
+
+Just to help you understand - I ran tests on 10 brands and got these results. While some outputs aren’t perfect, most of the results are accurate. The concept was already proven during the proof of concept phase, and this refactoring was about building a solid, scalable foundation.
+
+My opinion still stands: the pipeline is functional, and to improve it further, I need to switch to a better search engine and implement a chunking/ranking algorithm..
+
+At this point, we can either build on the progress I’ve made and refine the pipeline, or throw this work away and try something completely new. Let me know how you’d like to proceed.
