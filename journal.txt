@@ -12,7 +12,7 @@ I checked and brave works well for both nike and hm
 
 Another problem is that nike declares a different delivery time on their policy page and product pages so this will have to be handled by the prompt. Just return the standard response.
 
-The prompt will also need to handle memeberships. Ignore delivery and return info under memberships.
+The prompt will also need to handle memberships. Ignore delivery and return info under memberships.
 
 TODO-
 [x] Check all files once
@@ -28,9 +28,5 @@ Run the Pipeline for 5 Brands (Deliver something tangible).
 
 Pages have a lot of noise and sites keep thinking I'm from the US
 
-
-Just to help you understand - I ran tests on 10 brands and got these results. While some outputs aren’t perfect, most of the results are accurate. The concept was already proven during the proof of concept phase, and this refactoring was about building a solid, scalable foundation.
-
-My opinion still stands: the pipeline is functional, and to improve it further, I need to switch to a better search engine and implement a chunking/ranking algorithm..
-
-At this point, we can either build on the progress I’ve made and refine the pipeline, or throw this work away and try something completely new. Let me know how you’d like to proceed.
+Clean up the code
+Write documentation

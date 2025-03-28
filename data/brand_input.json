@@ -1,14 +1,29 @@
 {
-    "brands": [
-        {"H&M": "www2.hm.com/en_in/"},
-        {"Zara": "zara.com/in/"},
-        {"Nike": "nike.com/in/"},
-        {"Adidas": "adidas.co.in/"},
-        {"Levi's": "levi.in/"},
-        {"Myntra": "myntra.com/"},
-        {"Ajio": "ajio.com/"},
-        {"Uniqlo": "uniqlo.com/in/en/"},
-        {"Jack & Jones": "jackjones.in/"},
-        {"Vero Moda": "veromoda.in/"}
-    ]
-}
+    "H&M": "www2.hm.com/en_in/",
+    "Zara": "zara.com/in/", 
+    "Nike": "nike.com/in/",
+    "Adidas": "adidas.co.in/",
+    "Levi's": "levi.in/",
+    "Myntra": "myntra.com/",
+    "Ajio": "ajio.com/",
+    "Uniqlo": "uniqlo.com/in/en/",
+    "Jack & Jones": "jackjones.in/",
+    "Vero Moda": "veromoda.in/",
+    "Deepika Arora": "deepikaarora.com/",
+    "Ragavi": "ragavi.in/",
+    "Volcape": "volcape.com/",
+    "Poppi": "poppi.ind.in/",
+    "Prose Stories": "prose-stories.com/",
+    "Urbano": "urbanofashion.com/",
+    "Binfinite": "binfinite.in/",
+    "Little Box": "littleboxindia.com/",
+    "Fabindia": "fabindia.com/",
+    "Forever 21": "forever21.in/",
+    "Biba": "biba.in/",
+    "Celio": "celio.in/",
+    "Nicobar": "nicobar.com/",
+    "Summer Somewhere": "summersomewhere.com/",
+    "Marks and Spencer": "marksandspencer.in/",
+    "Rareism": "houseofrare.com/"
+  }
+  

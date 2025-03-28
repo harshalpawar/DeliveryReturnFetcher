@@ -26,7 +26,7 @@ def process_brand(brand_name, brand_domain, pause_mode=False):
             input("Press Enter to continue to scrape stage...")
         # scrape the policy pages
         scraped_content = scrape.jina_reader(urls)
-        logger.info(f"Scraped content: {scraped_content}")
+        # logger.info(f"Scraped content: {scraped_content}")
         if pause_mode:
             input("Press Enter to continue to gemini stage...")
         # extract policy information
@@ -68,9 +68,7 @@ def process_brands(brands, existing_data, args):
 def load_data(input_file, output_file):
     try:
         with open(input_file, "r") as f:
-            # Convert list of dictionaries to a single dictionary
-            brands_data = json.load(f)
-            brands = {list(brand.keys())[0]: list(brand.values())[0] for brand in brands_data["brands"]}
+            brands = json.load(f)
     except Exception as e:
         logger.error(f"Error loading {input_file}: {e}")
         sys.exit(1)

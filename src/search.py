@@ -29,8 +29,7 @@ def jina_search(brand_name, brand_domain):
         # Parse JSON responses
         response_data_delivery = response_delivery.json()
         response_data_return = response_return.json()
-        logger.info(f"Delivery response: {response_data_delivery}")
-        logger.info(f"Return response: {response_data_return}")
+        
         if response_data_delivery.get("data", []) == None:
             raise Exception(f"No delivery policy found for {brand_name}")
         if response_data_return.get("data", []) == None:
