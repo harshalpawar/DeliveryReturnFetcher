@@ -14,19 +14,47 @@ Another problem is that nike declares a different delivery time on their policy 
 
 The prompt will also need to handle memberships. Ignore delivery and return info under memberships.
 
-TODO-
-[x] Check all files once
-Switch to Brave Search (Critical for search accuracy).
-Separate Scraped Data (Quick fix to clean up logs and I need them for clean.py).
-[x] Optimize Gemini Prompt and config (Improves extraction accuracy).
-    Also check out structured output and any other useful options in their docs
-[x] Optimize Jina config
-Include Home Page and Product Page (Some brands have the info here).
-Write clean.py (split scraped data into chunks and rank them by relevance)
-Do the 20 brand test (test on a diverse dataset)
-Run the Pipeline for 5 Brands (Deliver something tangible).
-
 Pages have a lot of noise and sites keep thinking I'm from the US
 
-Clean up the code
-Write documentation
+Try this idea - clean pages, extract relevant information and get final response all through Gemini by making separate API calls
+Another idea - make a separate call to Gemini and have it verify the output. Also try the thinking model.
+Another idea - if search fails, retry with less specific keywords instead of skipping.
+Another idea - check how Jina is modifying the URLs. Store and hash the API responses.
+
+TODO-
+[x] Clean up the code
+[ ] Switch to Brave Search (Critical for search accuracy).
+[ ] Separate Scraped Data (Quick fix to clean up logs).
+[x] Optimise Gemini Prompt
+[ ] Include Home Page and Product Page (Some brands have the info here).
+[x] Run the Pipeline for 5 Brands (Deliver something tangible).
+[x] Do the 20 brand test (test on a diverse dataset)
+[x] Clean up the code
+[ ] Write documentation + reasoning
+[x] Excalidraw with challenges
+[ ] Get a Gemini/other API key
+
+[x] Look at the current feedback
+[ ] Look at the complete feedback
+[ ] Improve prompt
+[ ] Optimise Gemini config (Improves extraction accuracy).
+[ ] Check out structured output and any other useful options in Gemini docs
+[ ] Optimise Jina config
+[ ] Update sheet with new results
+[ ] Learn statistics for calcing the accuracy/confidence
+[ ] Design a system for calcing accuracy/confidence
+[ ] Write clean.py (split scraped data into chunks and rank them by relevance)
+[ ] Test trying to split to inference step
+[ ] Have Gemini verify it's own output in a seperate API request
+[ ] Explore finetuning by giving it input/output examples
+
+Another idea - since many sites link to their policy pages on the home page, scrape the home page and check if there is a policy page linked
+Jina adds this - ?srsltid= - to every URL. Remove it.
+keyword searching within the text combined with positional biasing is a more robust and safer strategy than URL filtering
+
+Biggest improvements will come from - 
+[ ] Using a better search engine
+[ ] Improving my prompt to cover as many edge cases as possible
+[ ] Using a reasoning LLM
+[ ] Crawling and find the policy pages (incase search fails)
+[ ] Cleaning the data even more

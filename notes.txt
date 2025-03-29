@@ -1,0 +1,18 @@
+Notes - 
+Deepika Arora 
+Delivery charges - Search didn't find https://deepikaarora.com/policies/shipping-policy
+Fuck this page is not even indexed on Brave and Google. This is an odd case - I'll come back to this.
+Delivery time - FAQs page say 7-10 days. But the accurate information is on ^that page which Search didn't find.
+I HAVE to crawl the home page for policy page links.
+
+Volcape - 
+Gemini fucking hallucinated store credits LMAO.
+
+New prompt additions - 
+If return is exchange only, say exchange only. If exchange is size only, say exchange(size only). If exchange is defects only, say exchange(defect only).
+If return is exchange only, then no need to mention refund.
+For return method, the only options are brand pickup, self shipping and return in store (define them).
+
+Ignore international delivery times. Only add up domestic delivery times.
+Add up the dispatch and delivery times.
+Delivery/Return times must always be mentioned in days, not hours.

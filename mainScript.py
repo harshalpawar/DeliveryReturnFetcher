@@ -53,12 +53,12 @@ def process_brands(brands, existing_data, args):
         result = process_brand(brand_name, brand_domain, pause_mode=args.pause_mode)
         if result:
             existing_data[brand_name] = result
-            #Write all of the code from existing_data, overwriting the existing file
-            with open(BRAND_OUTPUT_JSON, "w") as f:
-              json.dump(existing_data, f, indent=4)
         if args.pause_mode:
             input("Press Enter to continue to next brand...")
-            
+
+    #Write all of the code from existing_data, overwriting the existing file
+    with open(BRAND_OUTPUT_JSON, "w") as f:
+        json.dump(existing_data, f, indent=4)
     logger.info(f"Processed {len(existing_data)} brands")
 
 # input: brand_input.json, brand_output.json

@@ -8,7 +8,6 @@ from google.genai import types
 from config import GEMINI_SYSTEM_PROMPT
 from logging_config import log as logger
 from paths import ENV_FILE
-
 load_dotenv(ENV_FILE)  
 
 # input: scraped_content
@@ -16,8 +15,6 @@ load_dotenv(ENV_FILE)
 # description: generate a structured response using Gemini
 def gemini_llm(scraped_content):
     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-
-
     user_prompt = f"""Follow the response format and simplification rules strictly.
     Extract the delivery and return policy from the following web page contents:
     {scraped_content}
