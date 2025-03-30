@@ -37,7 +37,7 @@ TODO-
 [x] Look at the current feedback
 [ ] Look at the complete feedback
 [ ] Improve prompt
-[ ] Optimise Gemini config (Improves extraction accuracy).
+[x] Optimise Gemini config (Improves extraction accuracy).
 [ ] Check out structured output and any other useful options in Gemini docs
 [ ] Optimise Jina config
 [ ] Update sheet with new results
@@ -55,6 +55,6 @@ keyword searching within the text combined with positional biasing is a more rob
 Biggest improvements will come from - 
 [ ] Using a better search engine
 [ ] Improving my prompt to cover as many edge cases as possible
-[ ] Using a reasoning LLM
+[x] Using a reasoning LLM
 [ ] Crawling and find the policy pages (incase search fails)
 [ ] Cleaning the data even more
