@@ -6,12 +6,42 @@ from dotenv import load_dotenv
 from paths import ENV_FILE
 from config import SEARCH_KEYWORDS, JINA_SEARCH_HEADERS
 from logging_config import log as logger
+from src.policy_page_fetcher import fetchPolicyPages
 load_dotenv(ENV_FILE)
+
+
+def remove_url_tag(content: str) -> str:
+    """
+    Remove the srsltid parameter from a URL.
+    
+    Args:
+        content (str): The full URL potentially containing the srsltid tag
+    
+    Returns:
+        str: The cleaned URL without the srsltid parameter
+    """
+    # Split the URL at '?' to separate base URL from parameters
+    parts = content.split('?')
+    
+    # If there are parameters, filter out the srsltid
+    if len(parts) > 1:
+        # Keep only parameters that don't start with 'srsltid'
+        clean_params = [param for param in parts[1].split('&') if not param.startswith('srsltid=')]
+        
+        # Reconstruct the URL
+        if clean_params:
+            return f"{parts[0]}?{'&'.join(clean_params)}"
+        else:
+            return parts[0]
+    
+    return content
+
 
 # input: brand_name, brand_domain
 # output: list of URLs to policy pages
 # description: search for policy-related pages on a brand's website using Jina AI
 def jina_search(brand_name, brand_domain):
+    # TODO: add a fallback mechanism
     JINA_API_KEY = os.getenv("JINA_API_KEY")
     
     url_delivery = f"https://s.jina.ai/?q={SEARCH_KEYWORDS['delivery']}&gl=IN&location=Mumbai&hl=en"
@@ -31,9 +61,9 @@ def jina_search(brand_name, brand_domain):
             raise Exception(f"No return policy found for {brand_name}")
         
         # Extract URLs from both responses and combine them removing duplicates
-        urls_delivery = [item["url"] for item in response_data_delivery["data"]]
-        urls_return = [item["url"] for item in response_data_return["data"]]
-        all_urls = list(set(urls_delivery + urls_return))
+        urls_delivery = [remove_url_tag(item["url"]) for item in response_data_delivery["data"]]
+        urls_return = [remove_url_tag(item["url"]) for item in response_data_return["data"]]
+        all_urls = list(set(urls_delivery + urls_return + fetchPolicyPages(brand_domain)))
         
         logger.info(f"Found {len(all_urls)} unique URLs for {brand_name}")
         return all_urls
@@ -41,6 +71,4 @@ def jina_search(brand_name, brand_domain):
     except Exception as e:
         logger.error(f"Unexpected error in jina_search: {e}")
         raise e
-
-
 

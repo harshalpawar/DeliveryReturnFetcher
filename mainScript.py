@@ -59,7 +59,7 @@ def process_brands(brands, existing_data, args):
     #Write all of the code from existing_data, overwriting the existing file
     with open(BRAND_OUTPUT_JSON, "w") as f:
         json.dump(existing_data, f, indent=4)
-    logger.info(f"Processed {len(existing_data)} brands")
+    logger.info(f"Processed {len(brands)} brands")
 
 # input: brand_input.json, brand_output.json
 # output: brands, existing_data

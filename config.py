@@ -1,5 +1,5 @@
 SEARCH_KEYWORDS = {
-    "delivery": "delivery+shipping+charges",
+    "delivery": "delivery+shipping",
     "returns": "returns+refund+exchange"
 }
 

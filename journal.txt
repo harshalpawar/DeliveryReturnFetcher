@@ -35,16 +35,16 @@ TODO-
 [ ] Get a Gemini/other API key
 
 [x] Look at the current feedback
-[ ] Look at the complete feedback
-[ ] Improve prompt
+[x] Look at the complete feedback
+[x] Improve prompt
 [x] Optimise Gemini config (Improves extraction accuracy).
-[ ] Check out structured output and any other useful options in Gemini docs
+[x] Check out structured output and any other useful options in Gemini docs
 [ ] Optimise Jina config
 [ ] Update sheet with new results
 [ ] Learn statistics for calcing the accuracy/confidence
 [ ] Design a system for calcing accuracy/confidence
 [ ] Write clean.py (split scraped data into chunks and rank them by relevance)
-[ ] Test trying to split to inference step
+[ ] Test trying to split to inference step **
 [ ] Have Gemini verify it's own output in a seperate API request
 [ ] Explore finetuning by giving it input/output examples
 
@@ -54,7 +54,18 @@ keyword searching within the text combined with positional biasing is a more rob
 
 Biggest improvements will come from - 
 [ ] Using a better search engine
-[ ] Improving my prompt to cover as many edge cases as possible
+[x] Improving my prompt to cover as many edge cases as possible
 [x] Using a reasoning LLM
-[ ] Crawling and find the policy pages (incase search fails)
-[ ] Cleaning the data even more
+[x] Crawling and find the policy pages (incase search fails)
+[x] Remove URL tags
+[x] Cache the scraped response
+    [ ] filter urls
+[ ] verify the code and test it
+
+[ ] URL matching problem with https:// and www
+[ ] new problem with searching in fetchPolicyPages
+put mainscript in src
+check sitemap
+gemini split step
+
+gemini scraped pages + human-collected info - just verify
