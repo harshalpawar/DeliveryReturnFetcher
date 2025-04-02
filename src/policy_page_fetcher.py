@@ -3,6 +3,7 @@ from urllib.parse import urljoin
 from typing import List, Set
 from logging_config import log as logger
 from playwright.sync_api import sync_playwright
+from playwright_stealth import stealth_sync
 
 # Define the keywords to search for (lowercase)
 POLICY_KEYWORDS: Set[str] = {
@@ -31,7 +32,7 @@ def is_valid_policy_link(href, link_text):
     has_exclude_keyword = any(keyword in href.lower() or keyword in link_text.lower() for keyword in EXCLUDE_KEYWORDS)
     return has_policy_keyword and not has_exclude_keyword
 
-def fetchPolicyPages(brandHomePageURL: str, timeout: int = 20) -> List[str]:
+def fetchPolicyPages(brandHomePageURL: str, timeout: int = 20, user_agent: str = None) -> List[str]:
     """
     Scrapes a given homepage URL to find and return links potentially
     leading to policy pages (shipping, delivery, returns, etc.).
@@ -39,6 +40,7 @@ def fetchPolicyPages(brandHomePageURL: str, timeout: int = 20) -> List[str]:
     Args:
         brandHomePageURL: The URL of the brand's homepage.
         timeout: Request timeout in seconds.
+        user_agent: Optional custom user agent string.
 
     Returns:
         A list of absolute URLs found on the homepage that contain
@@ -53,23 +55,40 @@ def fetchPolicyPages(brandHomePageURL: str, timeout: int = 20) -> List[str]:
 
     try:
         with sync_playwright() as p:
-            # Launch browser
-            browser = p.chromium.launch()
-            page = browser.new_page()
+            # Launch browser in headless mode
+            browser = p.chromium.launch(headless=True)
+            
+            # Set up default or custom user agent
+            if not user_agent:
+                user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+            
+            # Create context with user agent and viewport
+            context = browser.new_context(
+                user_agent=user_agent,
+                viewport={'width': 1280, 'height': 720}
+            )
+            page = context.new_page()
+            
+            # Apply stealth mode
+            stealth_sync(page)
             
             # Set timeout
             page.set_default_timeout(timeout * 1000)  # Convert to milliseconds
             
-            # Navigate to the page
-            logger.info(f"Navigating to {brandHomePageURL}...")
-            page.goto(brandHomePageURL, wait_until='networkidle')
+            # Navigate to the page with fallback
+            try:
+                page.goto(brandHomePageURL, wait_until='networkidle', timeout=timeout * 1000)
+            except Exception as e:
+                page.goto(brandHomePageURL, wait_until='load', timeout=timeout * 1000)
+            
+            # Wait for any dynamic content
+            page.wait_for_timeout(2000)  # 2 second grace period
             
             # Get the fully rendered HTML content
             html_content = page.content()
             
             # Close browser
             browser.close()
-            logger.info("Browser closed.")
 
     except Exception as e:
         logger.error(f"Error occurred while fetching {brandHomePageURL}: {e}")
@@ -96,7 +115,7 @@ def fetchPolicyPages(brandHomePageURL: str, timeout: int = 20) -> List[str]:
             if absolute_url.startswith(('http://', 'https://')):
                 found_urls.add(absolute_url)
 
-    logger.info(f"Potential policy page URLs found: {found_urls}")
+    logger.info(f"Found {len(found_urls)} potential policy page URLs")
     return sorted(list(found_urls))  # Return sorted list for consistency
 
 # --- Example Usage ---

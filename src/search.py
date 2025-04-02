@@ -1,14 +1,116 @@
 """
 Module for handling Jina AI search operations to find relevant policy pages.
 """
-import os, requests
+import os, requests, json
 from dotenv import load_dotenv
 from paths import ENV_FILE
 from config import SEARCH_KEYWORDS, JINA_SEARCH_HEADERS
 from logging_config import log as logger
 from src.utils import normalize_url
 from src.policy_page_fetcher import fetchPolicyPages
+from google import genai
+from google.genai import types
 load_dotenv(ENV_FILE)
+
+
+
+def gemini_url_filter(urls, brand_name):
+    """
+    Filter URLs using Gemini to identify the most relevant policy pages.
+    
+    Args:
+        urls (list): List of URLs to filter
+        brand_name (str): Name of the brand for context
+        
+    Returns:
+        list: Filtered list of URLs deemed relevant for delivery and return policies
+    """
+    try:
+        GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        
+        # Prepare the prompt
+        user_prompt = f"""
+        You are a URL filtering expert. I have a list of URLs from {brand_name}'s website that might contain delivery and return policies.
+        Please analyze these URLs and return ONLY the ones most likely to contain delivery or return policy information.
+        Consider URLs containing keywords like 'shipping', 'delivery', 'returns', 'exchange', 'faq', 'help', 'policy', etc.
+        Preserve pages that could potentially contain policy information, but remove most product pages, category pages, and other non-policy pages, but preserve 1 product page as a reference.
+        Avoid URLs for privacy policies, terms of service, or other unrelated pages.
+
+        URLs to analyze:
+        {json.dumps(urls, indent=2)}
+
+        Example input:
+        [
+          "https://example.com/shipping-and-delivery",
+          "https://example.com/returns-policy",
+          "https://example.com/privacy-policy",
+          "https://example.com/products/shoes",
+          "https://example.com/help/order-tracking",
+          "https://example.com/terms-of-service",
+          "https://example.com/faq/returns"
+        ]
+
+        Example output:
+        [
+          "https://example.com/shipping-and-delivery",
+          "https://example.com/returns-policy",
+          "https://example.com/help/order-tracking",
+          "https://example.com/faq/returns"
+        ]
+
+        Return the filtered URLs as a JSON array with no additional text or explanation.
+        """
+        
+        # Make the API call to Gemini
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.0-flash-thinking-exp-01-21",
+                config=types.GenerateContentConfig(
+                    temperature=0.1  # Low temperature for more focused results
+                ),
+                contents=user_prompt
+            )
+            
+            # Clean and parse the response
+            response_text = response.text.strip()
+            
+            # Extract JSON content from markdown code block
+            if '```json' in response_text:
+                # Split by ```json and take the content after it
+                json_content = response_text.split('```json')[-1]
+                # Remove trailing ``` if present
+                json_content = json_content.split('```')[0]
+            else:
+                json_content = response_text
+                
+            # Clean the extracted content
+            json_content = json_content.strip()
+            
+            try:
+                filtered_urls = json.loads(json_content)
+                if not isinstance(filtered_urls, list):
+                    logger.error("Parsed response is not a list")
+                    logger.error(f"Response text was: {response_text}")
+                    return urls
+                
+                # Ensure all returned URLs were in the original list
+                filtered_urls = [url for url in filtered_urls if url in urls]
+                return filtered_urls
+                
+            except json.JSONDecodeError as e:
+                logger.error(f"Failed to parse Gemini response as JSON: {e}")
+                logger.error(f"Response text was: {response_text}")
+                return urls
+        
+        except Exception as e:
+            logger.error(f"Error in Gemini API call: {e}")
+            return urls
+            
+    except Exception as e:
+        logger.error(f"Error in gemini_url_filter: {e}")
+        # Return original URLs if filtering fails
+        return urls
 
 
 def remove_url_tag(content: str) -> str:
@@ -80,12 +182,18 @@ def jina_search(brand_name, brand_domain):
         # Extract URLs from both responses
         urls_delivery = [remove_url_tag(item["url"]) for item in response_data_delivery["data"]]
         urls_return = [remove_url_tag(item["url"]) for item in response_data_return["data"]]
-        
+        policy_pages = fetchPolicyPages(brand_domain)
         # Combine and deduplicate URLs using normalization
-        all_urls = deduplicate_urls(urls_delivery + urls_return + fetchPolicyPages(brand_domain))
+        all_urls = deduplicate_urls(policy_pages + urls_delivery + urls_return)
         
         logger.info(f"Found {len(all_urls)} unique URLs for {brand_name}")
-        return all_urls
+        
+        # Filter URLs using Gemini
+        # filtered_urls = gemini_url_filter(all_urls, brand_name)
+        filtered_urls = all_urls
+        logger.info(f"After Gemini filtering: {len(filtered_urls)} URLs remaining")
+        
+        return filtered_urls
         
     except Exception as e:
         logger.error(f"Unexpected error in jina_search: {e}")

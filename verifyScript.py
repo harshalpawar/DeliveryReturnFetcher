@@ -9,13 +9,6 @@ def process_brand_for_verification(brand_name, brand_domain):
     """
     logger.info(f"Processing brand for verification: {brand_name}")
     try:
-        # search for policy pages
-        urls = search.jina_search(brand_name, brand_domain)
-        logger.info(f"Found URLs: {urls}")
-        
-        # scrape the policy pages
-        scraped_content = scrape.jina_reader(urls)
-        
         # Load human-verified data
         with open(HUMAN_DATA, "r") as f:
             human_data = json.load(f)
@@ -23,9 +16,16 @@ def process_brand_for_verification(brand_name, brand_domain):
         if brand_name not in human_data:
             logger.error(f"No human-verified data found for {brand_name}")
             return None
+
+        # search for policy pages
+        urls = search.jina_search(brand_name, brand_domain)
+        logger.info(f"Found URLs: {urls}")
+        
+        # scrape the policy pages
+        scraped_content = scrape.jina_reader(urls, brand_name)
             
         # verify against human data
-        verification_result = response.verify_gemini(scraped_content, human_data[brand_name])
+        verification_result = response.verify_gemini(scraped_content, human_data[brand_name], brand_name)
         logger.info(f"Verification result for {brand_name}: {verification_result}")
         return verification_result
 
@@ -49,12 +49,7 @@ def process_brands_verification(brands):
     # Write verification results to a new file
     with open(VERIFICATION_RESULTS, "w") as f:
         json.dump(verification_results, f, indent=4)
-    # Ask user if they want to continue or end
-    user_input = input("\nContinue? (y/n): ").strip().lower()
-    if user_input in ['n', 'no']:
-        print("Exiting...")
-        import sys
-        sys.exit(0)
+
     logger.info(f"Completed verification for {len(verification_results)} brands")
     return verification_results
 

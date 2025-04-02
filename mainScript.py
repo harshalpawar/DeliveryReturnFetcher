@@ -25,13 +25,13 @@ def process_brand(brand_name, brand_domain, pause_mode=False):
         if pause_mode:
             input("Press Enter to continue to scrape stage...")
         # scrape the policy pages
-        scraped_content = scrape.jina_reader(urls)
+        scraped_content = scrape.jina_reader(urls, brand_name)
         # logger.info(f"Scraped content: {scraped_content}")
         if pause_mode:
             input("Press Enter to continue to gemini stage...")
         # extract policy information
-        policy_info = response.gemini_llm(scraped_content)
-        logger.info(f"Extracted policy information: {policy_info}")
+        policy_info = response.gemini_llm(scraped_content, brand_name)
+        logger.info(f"Extracted policy information for {brand_name}: {policy_info}")
         return policy_info
 
     except Exception as e:

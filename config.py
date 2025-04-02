@@ -9,8 +9,7 @@ def JINA_READER_HEADERS(api_key):
         "X-Base": "final",
         "X-No-Cache": "true",
         "X-Proxy": "auto",
-        "X-Retain-Images": "none",
-        "X-Timeout": "20"
+        "X-Retain-Images": "none"
     }
 
 def JINA_SEARCH_HEADERS(api_key, brand_domain):
@@ -112,7 +111,7 @@ Example of applying the steps (mental walkthrough):
 Now, provide the text containing the delivery and return policy for the brand. I will follow these steps to generate the response.
 """
 
-GEMINI_SYSTEM_PROMPT_VERIFICATION = """
+GEMINI_VERIFICATION_PROMPT = """
 Your purpose is to verify the accuracy of scraped delivery and return policies for a fashion brand in India. You will be given a scraped data summary and the relevant text extracted from the brand's website. Your task is to assess the accuracy of the scraped data based on the website text, following these steps meticulously:
 
 **Step 1: Understand the Goal, Format, and Inputs**

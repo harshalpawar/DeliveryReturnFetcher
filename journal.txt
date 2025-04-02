@@ -66,17 +66,23 @@ new idea - gemini scraped pages + human-collected info - just verify
 [x] fix the program
     [x] URL matching problem with https:// and www
     [x] new problem with searching in fetchPolicyPages
-[ ] Update sheet with new results
-[ ] Implement fallback to scraping with Playwright if Jina fails
-[ ] redo failed brands
-[ ] Add basic url filtering with llm
+[x] Run tests
+[x] Implement fallback to scraping with Playwright if Jina fails
+[x] Add basic url filtering with llm
+[x] Add a use Playwright only filter in scrape.py
 [ ] Write a script to verify the cache
+[x] remove fabindia from cache
+[x] swap to playwright_stealth
+[ ] verify code and clean up before rerunning tests
+[ ] fix the networkidle error
+[ ] Rerun tests
+[ ] Update sheet with new results
 
 [x] implement verification idea
     [x] Import spreadsheet into codebase
     [x] Write a new function for verification with Gemini
     [x] Write a new prompt
-    [ ] rerun the tests here
+    [ ] run the tests
 
 [ ] Write clean.py (split scraped data into chunks and rank them by relevance)
 [ ] Test trying to split to inference step
@@ -84,7 +90,9 @@ new idea - gemini scraped pages + human-collected info - just verify
 [ ] fix the test directory
 [ ] documentation, comments and make the code push-ready.
 
-optimised jina config, added url normalisation for caching, url deduplication, playwright for fetchpolicypages, ran tests on all brands, imported human data, wrote new prompt for verification, corrected input urls
+MASSIVE COMMIT! optimised jina config, added url normalisation for caching, url deduplication, playwright for fetchpolicypages, ran tests on all brands, imported human data, wrote new prompt for verification, corrected input urls
+
+implemented verification fully, added playwright+markdownify as a fallback, url filtering with gemini
 
 Problem in search - if 1 part fails, we skip even if other parts found urls to process
 
@@ -95,4 +103,21 @@ Program runs fine - I'm running tests on all brands
 Problem sites - prose stories, rareism, uniqlo, summer somewhere, forever 21, fabindia
 
 Potential issue is that the cached data might be bad.
+
+URL filtering is bad. Info loss for H&M. Disabled.
+
+redo Jack & Jones, Littlebox
+Prose stories cache delete and redo
+problems - fabindia, forever21
+
+Final response for Fabindia: Apologies, but I am unable to extract the delivery and return policy from the provided web page contents. The content for each URL you provided is just the message "Please enable JavaScript to continue using this application.", and does not contain the actual text of the Fabindia website's policy pages.
+
+To proceed, please provide the actual text content from the following Fabindia pages:
+
+*   **Shipping & Delivery page:**  `https://www.fabindia.com/shipping-delivery`
+*   **Return & Exchange page:** `https://www.fabindia.com/return-exchange`
+
+Once you provide the text content from these pages, I will be able to follow the steps and extract the delivery and return policy in the requested format.
+
+Forever21 is problematic still https://content.abfrl.in/faqdetail?uid=How%20do%20I%20know%20my%20order%20is%20confirmed?
 
