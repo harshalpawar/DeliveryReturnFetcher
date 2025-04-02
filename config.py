@@ -5,21 +5,25 @@ SEARCH_KEYWORDS = {
 
 def JINA_READER_HEADERS(api_key):
     return {
-        'Authorization': f'Bearer {api_key}',
-        "X-Return-Format": "markdown"
+        "Authorization": f"Bearer {api_key}",
+        "X-Base": "final",
+        "X-No-Cache": "true",
+        "X-Proxy": "auto",
+        "X-Retain-Images": "none",
+        "X-Timeout": "20"
     }
 
 def JINA_SEARCH_HEADERS(api_key, brand_domain):
     return {
         "Accept": "application/json",
         "Authorization": f"Bearer {api_key}",
-        'X-No-Cache': 'true',
+        "X-No-Cache": "true",
         "X-Respond-With": "no-content",
         "X-Site": brand_domain
     }
 
 GEMINI_CONFIG = {
-    "model": "gemini-2.5-pro-exp-03-25",
+    "model": "gemini-2.0-flash-thinking-exp-01-21",
     "temperature": 0.1,
 }
 GEMINI_SYSTEM_PROMPT = """
@@ -107,6 +111,101 @@ Example of applying the steps (mental walkthrough):
 
 Now, provide the text containing the delivery and return policy for the brand. I will follow these steps to generate the response.
 """
+
+GEMINI_SYSTEM_PROMPT_VERIFICATION = """
+Your purpose is to verify the accuracy of scraped delivery and return policies for a fashion brand in India. You will be given a scraped data summary and the relevant text extracted from the brand's website. Your task is to assess the accuracy of the scraped data based on the website text, following these steps meticulously:
+
+**Step 1: Understand the Goal, Format, and Inputs**
+
+- You are given two inputs:
+    1.  **Scraped Data Summary:** A summary of the delivery and return policy extracted from the brand's website, formatted according to the structure defined below.
+    2.  **Website Text:** The raw text extracted from the brand's delivery and return policy pages.
+
+- Your final output must indicate whether the scraped data is accurate and, if not, provide corrections *and* the relevant snippets from the website text that support those corrections. It *must* be in one of the following forms:
+
+    *   **If accurate:** "The scraped data is accurate based on the provided website text."
+    *   **If inaccurate:**
+        ```
+        The scraped data is inaccurate. Corrections:
+        **Delivery:**
+        - Delivery Charges: Rs. X; Free over Rs. Y (or "Free shipping")
+          > Website Snippet: "Relevant excerpt about delivery charges"
+        - Estimated Delivery Time: Within B days OR A-B days
+          > Website Snippet: "Relevant excerpt about delivery time"
+        **Returns:**
+        - Return Period: Within X days (or "X days - exchanges only", "X days - exchanges only (size only)", "X days - exchanges only (defect only)")
+          > Website Snippet: "Relevant excerpt about return period"
+        - Return Method: Brand pickup / Self-ship / Return in store (mention return pickup charges if any)
+          > Website Snippet: "Relevant excerpt about return method"
+        - Refund Mode: Bank a/c / Store credit / Original mode of payment / Other (Omit if exchange only)
+          > Website Snippet: "Relevant excerpt about refund mode"
+        **Additional Info:**
+        - [Relevant details not fitting above]
+          > Website Snippet: "Relevant excerpt providing additional info"
+        ```
+
+- You must ignore information related to international shipping, memberships, loyalty programs, or subscription services.
+
+**Step 2: Analyze the Scraped Data**
+
+- Deconstruct the "Scraped Data Summary" into its individual components: delivery charges, estimated delivery time, return period, return method, refund mode, and additional info.
+
+**Step 3: Cross-Reference with Website Text**
+
+- For *each* component of the "Scraped Data Summary," search for supporting evidence (or lack thereof) within the "Website Text."
+- Pay close attention to:
+    -   **Delivery Charges:** Confirm the standard charge and free shipping threshold.
+    -   **Estimated Delivery Time:**  Prioritize information from the main policy page. Check if the scraped range matches what's on the website. If regional differences exist, ensure the scraped range accounts for them.
+    -   **Return Period:** Verify the return window duration and any exchange-only conditions (size, defect, etc.).
+    -   **Return Method:**  Confirm whether the return is brand pickup, self-ship, or return in store. Verify pickup charges, if any.
+    -   **Refund Mode:** If returns are allowed (not just exchanges), check if the scraped refund mode matches the website's description.
+    -   **Additional Info:**  Ensure the scraped "Additional Info" isn't already covered in other sections and doesn't contain forbidden information (memberships, international shipping, etc.).
+
+**Step 4: Identify Discrepancies**
+
+- If *any* of the following conditions are met, the scraped data is inaccurate:
+    -   A component in the "Scraped Data Summary" *cannot* be found or reasonably inferred from the "Website Text."
+    -   The value or description of a component in the "Scraped Data Summary" *contradicts* the information in the "Website Text."
+
+**Step 5: Provide Corrections AND Snippets (If Necessary)**
+
+- If the scraped data is inaccurate, create a "Corrections" section formatted exactly as described in Step 1.
+- For *each* inaccurate component, provide the *correct* information as found in the "Website Text." Use the formatting guidelines from the original prompt (Rs. X, Within B days, etc.).
+- **Immediately following the corrected information, include a "> Website Snippet: " line followed by the exact text excerpt from the "Website Text" that supports the correction.  Keep the snippet concise and directly relevant.**
+- If information is missing in the scraped data, add it to the "Corrections" section *with* the supporting snippet.
+- Retain any accurate information that can still be extracted despite an inaccurate extraction.
+- Only include truly relevant delivery/return information. Exclude marketing text and irrelevant details.
+- Do not add information already contained in the "Scraped Data Summary."
+
+**Step 6: Assemble the Final Response**
+
+- Based on your analysis, provide *one* of the two final responses defined in Step 1:
+    -   "The scraped data is accurate based on the provided website text."
+    -   Or the detailed "Corrections" section if discrepancies were found, *including the website snippets.*
+
+---
+
+Example of applying the steps (mental walkthrough):
+
+1. *Inputs received and format understood.*
+2. *Scraped data: Delivery Charges: Rs. 99, Return Period: 14 days, Refund Mode: Store Credit, etc.*
+3. *Website text: "Free shipping on orders over Rs. 50. Returns accepted within 30 days for a full refund."*
+4. *Discrepancies found: Delivery charges are wrong, return period is wrong, refund mode is wrong.*
+5. *Corrections generated:*
+   * *Delivery Charges: Free over Rs. 50*
+     *> Website Snippet: "Free shipping on orders over Rs. 50"*
+   * *Return Period: Within 30 days*
+     *> Website Snippet: "Returns accepted within 30 days"*
+   * *Refund Mode: Bank a/c*
+     *> Website Snippet: "for a full refund"*
+6. *Final response assembled with the identified corrections and snippets.*
+
+---
+
+Now, provide the **Scraped Data Summary** and the **Website Text**. I will follow these steps to generate the response.
+"""
+
+
 
 # GEMINI_SYSTEM_PROMPT = """
 # Your purpose is to extract the delivery and return policy of a fashion brand in India.

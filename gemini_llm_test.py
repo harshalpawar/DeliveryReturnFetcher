@@ -1,5 +1,10 @@
 from src.response import gemini_llm
 from logging_config import log as logger
+
+def test_gemini_llm():
+    response = gemini_llm(content)
+    logger.info(response)
+
 content = """
 Content: URL: https://www.nike.com/in/help/a/bank-transaction-fees
 
@@ -1917,10 +1922,6 @@ Nike Privacy Policy
 
 
 """
-
-def test_gemini_llm():
-    response = gemini_llm(content)
-    logger.info(response)
 
 if __name__ == "__main__":
     test_gemini_llm()

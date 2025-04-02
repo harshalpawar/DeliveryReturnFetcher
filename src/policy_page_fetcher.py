@@ -1,8 +1,8 @@
-import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from typing import List, Set
 from logging_config import log as logger
+from playwright.sync_api import sync_playwright
 
 # Define the keywords to search for (lowercase)
 POLICY_KEYWORDS: Set[str] = {
@@ -13,27 +13,25 @@ POLICY_KEYWORDS: Set[str] = {
     "refund",
     "refunds",
     "exchange",
+    "exchanges",
     "faq",
     "faqs",
     "policy",
     "help"
 }
+
 EXCLUDE_KEYWORDS: Set[str] = {
     "privacy",
     "terms",
-    "condition"
+    "conditions"
 }
+
 def is_valid_policy_link(href, link_text):
     has_policy_keyword = any(keyword in href.lower() or keyword in link_text.lower() for keyword in POLICY_KEYWORDS)
     has_exclude_keyword = any(keyword in href.lower() or keyword in link_text.lower() for keyword in EXCLUDE_KEYWORDS)
     return has_policy_keyword and not has_exclude_keyword
 
-# Define a common browser user agent to avoid being blocked
-HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-}
-
-def fetchPolicyPages(brandHomePageURL: str, timeout: int = 10) -> List[str]:
+def fetchPolicyPages(brandHomePageURL: str, timeout: int = 20) -> List[str]:
     """
     Scrapes a given homepage URL to find and return links potentially
     leading to policy pages (shipping, delivery, returns, etc.).
@@ -47,20 +45,39 @@ def fetchPolicyPages(brandHomePageURL: str, timeout: int = 10) -> List[str]:
         policy-related keywords in their href or link text.
         Returns an empty list if an error occurs or no relevant links are found.
     """
-    brandHomePageURL = "https://" + brandHomePageURL
+    if not brandHomePageURL.startswith(('http://', 'https://')):
+        brandHomePageURL = 'https://' + brandHomePageURL
+        
     found_urls: Set[str] = set()
-
     logger.info(f"Attempting to fetch policy pages for: {brandHomePageURL}")
-    response = requests.get(brandHomePageURL, headers=HEADERS, timeout=timeout)
-    try:
-        response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
-    except requests.exceptions.HTTPError as e:
-        logger.error(f"HTTP Error occurred: {e}")
-        logger.error(f"Status Code: {response.status_code}")
-        return []  # Return an empty list to indicate no policy pages found
 
-    soup = BeautifulSoup(response.text, 'html.parser')
-    links = soup.find_all('a', href=True) # Find all anchor tags with an href attribute
+    try:
+        with sync_playwright() as p:
+            # Launch browser
+            browser = p.chromium.launch()
+            page = browser.new_page()
+            
+            # Set timeout
+            page.set_default_timeout(timeout * 1000)  # Convert to milliseconds
+            
+            # Navigate to the page
+            logger.info(f"Navigating to {brandHomePageURL}...")
+            page.goto(brandHomePageURL, wait_until='networkidle')
+            
+            # Get the fully rendered HTML content
+            html_content = page.content()
+            
+            # Close browser
+            browser.close()
+            logger.info("Browser closed.")
+
+    except Exception as e:
+        logger.error(f"Error occurred while fetching {brandHomePageURL}: {e}")
+        return []
+
+    # Parse the HTML content with BeautifulSoup
+    soup = BeautifulSoup(html_content, 'html.parser')
+    links = soup.find_all('a', href=True)  # Find all anchor tags with an href attribute
 
     for link_tag in links:
         href = link_tag['href']
@@ -72,7 +89,6 @@ def fetchPolicyPages(brandHomePageURL: str, timeout: int = 10) -> List[str]:
 
         # Check if any keyword exists in the href or link text
         if is_valid_policy_link(href, link_text):
-
             # Convert relative URLs to absolute URLs
             absolute_url = urljoin(brandHomePageURL, href)
 
@@ -81,13 +97,11 @@ def fetchPolicyPages(brandHomePageURL: str, timeout: int = 10) -> List[str]:
                 found_urls.add(absolute_url)
 
     logger.info(f"Potential policy page URLs found: {found_urls}")
-    return sorted(list(found_urls)) # Return sorted list for consistency
+    return sorted(list(found_urls))  # Return sorted list for consistency
 
 # --- Example Usage ---
 if __name__ == "__main__":
-    # Example: Replace with an actual brand homepage URL
     homepage_url = "https://volcape.com/"
-    # homepage_url = "https://www.myntra.com/" # Another example
 
     if homepage_url:
         policy_urls = fetchPolicyPages(homepage_url)

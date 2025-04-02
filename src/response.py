@@ -35,3 +35,43 @@ def gemini_llm(scraped_content):
         return "Error generating content with Gemini"
 
     return response.text
+
+def verify_gemini(scraped_content, human_policy):
+    """
+    Verify scraped content against human-verified policy data.
+    Returns a verification result containing matches and discrepancies.
+    """
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    
+    # Create verification prompt
+    verification_prompt = f"""
+    Compare the following policy information against the scraped content and identify any discrepancies.
+    
+    Human-verified policy:
+    {human_policy}
+    
+    Scraped content:
+    {scraped_content}
+    """
+
+    try:
+        response = client.models.generate_content(
+            model=GEMINI_CONFIG["model"],
+            config=types.GenerateContentConfig(
+                system_instruction=GEMINI_SYSTEM_PROMPT,
+                temperature=GEMINI_CONFIG["temperature"]
+            ),
+            contents=verification_prompt
+        )
+        
+        return response.text
+        
+    except Exception as e:
+        logger.error(f"Error in verification: {e}")
+        return {
+            "error": str(e),
+            "matches": [],
+            "missing": ["All - verification failed"],
+            "contradictions": [],
+            "confidence_score": "None - verification failed"
+        }
