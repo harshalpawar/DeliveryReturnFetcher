@@ -1,0 +1,14 @@
+OBJECTIVE - VERIFICATION & EXTRACTION PIPELINE FOR 24 + 10 BRANDS
+
+[x] Read through the code
+[x] Implement URL bank & caching
+[x] Improve the prompts
+[x] Improve arrangement of functions
+[x] Excalidraw mindmap
+[x] Get input files ready for tests
+[x] Run tests
+[x] Upload to sheet
+[ ] Divide the whole data into a fixed format
+
+Done -
+Deepika Arora, Exhale Label, Torqadorn, Saadaa

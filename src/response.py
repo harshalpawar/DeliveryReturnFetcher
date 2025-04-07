@@ -8,7 +8,7 @@ from google.genai import types
 from config import GEMINI_SYSTEM_PROMPT, GEMINI_CONFIG, GEMINI_VERIFICATION_PROMPT
 from logging_config import log as logger
 from paths import ENV_FILE
-load_dotenv(ENV_FILE)  
+load_dotenv(ENV_FILE)
 
 # input: scraped_content
 # output: structured_response
@@ -23,7 +23,7 @@ def gemini_llm(scraped_content, brand_name=None):
     # Make the API call to Gemini
     try:
         response = client.models.generate_content(
-            model=GEMINI_CONFIG["model"], 
+            model=GEMINI_CONFIG["model"],
             config=types.GenerateContentConfig(
                 system_instruction=GEMINI_SYSTEM_PROMPT,
                 temperature=GEMINI_CONFIG["temperature"]
@@ -38,18 +38,18 @@ def gemini_llm(scraped_content, brand_name=None):
 
 def verify_gemini(scraped_content, human_policy, brand_name=None):
     """
-    Verify scraped content against human-verified policy data.
+    Verify human-verified policy data against scraped content.
     Returns a verification result containing matches and discrepancies.
     """
     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-    
+
     # Create verification prompt
     verification_prompt = f"""
     Compare the following policy information against the scraped content and identify any discrepancies.
-    
+
     Human-verified policy:
     {human_policy}
-    
+
     Scraped content:
     {scraped_content}
     """
@@ -63,9 +63,9 @@ def verify_gemini(scraped_content, human_policy, brand_name=None):
             ),
             contents=verification_prompt
         )
-        
+
         return f"Final response for {brand_name}: {response.text}"
-        
+
     except Exception as e:
         logger.error(f"Error in verification: {e}")
         return {

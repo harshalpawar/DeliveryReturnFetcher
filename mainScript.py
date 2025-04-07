@@ -1,4 +1,4 @@
-import argparse, json, sys, os
+import argparse, json, sys
 from src import search, scrape, response
 from paths import BRAND_INPUT_JSON, BRAND_OUTPUT_JSON
 from logging_config import log as logger
@@ -26,7 +26,7 @@ def process_brand(brand_name, brand_domain, pause_mode=False):
             input("Press Enter to continue to scrape stage...")
         # scrape the policy pages
         scraped_content = scrape.jina_reader(urls, brand_name)
-        # logger.info(f"Scraped content: {scraped_content}")
+        logger.info(f"Collected scraped content for {brand_name}")
         if pause_mode:
             input("Press Enter to continue to gemini stage...")
         # extract policy information
@@ -73,23 +73,13 @@ def load_data(input_file, output_file):
         logger.error(f"Error loading {input_file}: {e}")
         sys.exit(1)
 
-    # Create the output file if it does not exist
-    if not os.path.exists(output_file):
-        logger.info(f"{output_file} does not exist. Creating a new file.")
-        with open(output_file, "w") as f:
-            json.dump({}, f)  # Initialize with an empty dictionary
-
-    try:
-        with open(output_file, "r") as f:
-            existing_data = json.load(f)
-    except Exception as e:
-        logger.error(f"Error loading {output_file}: {e}")
-        existing_data = {}
+    with open(output_file, "r") as f:
+        existing_data = json.load(f) if f.readable() else {}
 
     return brands, existing_data
 
 # handle single brand or all brands
-def main():    
+def main():
     brands, existing_data = load_data(BRAND_INPUT_JSON, BRAND_OUTPUT_JSON)
 
     args = parse_arguments()
@@ -98,19 +88,19 @@ def main():
     # If specific test to run with details
     if args.desc:
         logger.info(f"Description: {args.desc}")
-    logger.info("-" * 40) # Separator line  
+    logger.info("-" * 40) # Separator line
 
     if args.brand:
         if args.brand not in brands:
             print(f"Brand {args.brand} not found in brand_input.json")
         else:
-            process_brands({args.brand: brands[args.brand]}, existing_data, args) 
+            process_brands({args.brand: brands[args.brand]}, existing_data, args)
     else:
         process_brands(brands, existing_data, args)
 
     logger.info("-" * 40) # Separator line
     logger.info("Pipeline completed")
-    logger.info("-" * 40) # Separator line  
+    logger.info("-" * 40) # Separator line
 
 if __name__ == "__main__":
     main()

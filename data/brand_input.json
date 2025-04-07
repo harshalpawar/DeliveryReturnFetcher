@@ -1,6 +1,6 @@
 {
     "H&M": "https://www2.hm.com/en_in/",
-    "Zara": "https://zara.com/in/", 
+    "Zara": "https://zara.com/in/",
     "Nike": "https://nike.com/in/",
     "Adidas": "https://adidas.co.in/",
     "Levi's": "https://levi.in/",
@@ -21,7 +21,16 @@
     "Celio": "https://celio.in/",
     "Nicobar": "https://nicobar.com/",
     "Summer Somewhere": "https://summeraway.in/",
-    "Marks and Spencer": "https://www.marksandspencer.in/",
-    "Rareism": "https://thehouseofrare.com/"
+    "Marks and Spencer": "https://marksandspencer.in/",
+    "Rareism": "https://thehouseofrare.com/",
+    "Exhale Label": "https://exhalelabel.com/",
+    "Torqadorn": "https://torqadorn.com/",
+    "Saadaa": "https://saadaa.in/",
+    "Cavaathleisure": "https://cavaathleisure.com/",
+    "Karagiri": "https://karagiri.com/",
+    "Tasva": "https://tasva.com/",
+    "Kalkifashion": "https://kalkifashion.com/in/",
+    "The Beach Company": "https://thebeachcompany.in/",
+    "Creatures of Habit": "https://creaturesofhabit.in/",
+    "Old Marigold": "https://oldmarigold.com/"
   }
-  

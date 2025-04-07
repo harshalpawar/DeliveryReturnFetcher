@@ -73,16 +73,16 @@ new idea - gemini scraped pages + human-collected info - just verify
 [ ] Write a script to verify the cache
 [x] remove fabindia from cache
 [x] swap to playwright_stealth
-[ ] verify code and clean up before rerunning tests
+[x] verify code and clean up before rerunning tests
 [ ] fix the networkidle error
-[ ] Rerun tests
-[ ] Update sheet with new results
+[x] Rerun tests
+[x] Update sheet with new results
 
 [x] implement verification idea
     [x] Import spreadsheet into codebase
     [x] Write a new function for verification with Gemini
     [x] Write a new prompt
-    [ ] run the tests
+    [x] run the tests
 
 [ ] Write clean.py (split scraped data into chunks and rank them by relevance)
 [ ] Test trying to split to inference step
@@ -121,3 +121,18 @@ Once you provide the text content from these pages, I will be able to follow the
 
 Forever21 is problematic still https://content.abfrl.in/faqdetail?uid=How%20do%20I%20know%20my%20order%20is%20confirmed?
 
+Using my new prompt is giving good results
+[x] remove prosestories from cache
+[ ] refine prompt
+[x] check code
+[x] fix playwright error (fallback with requests)
+[ ] fix url filter
+
+return days matters
+delivery days doesn't matter as much
+
+free delivery flag should not be raised for deepika arora ignore cod
+
+write new prompt
+get results for verification & extraction
+save urls for each brand

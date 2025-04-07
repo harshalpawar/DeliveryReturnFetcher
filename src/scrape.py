@@ -15,7 +15,7 @@ load_dotenv(ENV_FILE)
 
 # List of brands that should use Playwright directly instead of Jina
 USE_PLAYWRIGHT = [
-    "Fabindia"
+
 ]
 
 def load_cache():
@@ -55,7 +55,7 @@ def jina_reader(urls, brand_name=None):
     # Determine which URLs need to be fetched (based on normalized versions)
     urls_to_fetch = [url for url in urls if url_mapping[url] not in cache]
     cached_urls = [url for url in urls if url_mapping[url] in cache]
-    
+    logger.info(f"Jina Reader: urls_to_fetch: {len(urls_to_fetch)} cached_urls: {len(cached_urls)}")
     # Process each uncached URL
     if urls_to_fetch:
         logger.info(f"Fetching {len(urls_to_fetch)} new URLs")
@@ -149,10 +149,7 @@ def scrape_with_playwright(url, user_agent=None, headers=None):
             if not user_agent:
                 user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
             
-            # Combine user agent with other headers
-            all_headers = {"User-Agent": user_agent, **headers}
-            
-            # Create context with headers
+            # Create context with user agent and viewport
             context = browser.new_context(
                 user_agent=user_agent,
                 viewport={'width': 1280, 'height': 720}
@@ -169,10 +166,11 @@ def scrape_with_playwright(url, user_agent=None, headers=None):
             try:
                 page.goto(url, wait_until='networkidle', timeout=30000)
             except Exception as e:
+                logger.warning(f"Networkidle timeout, retrying with load event: {e}")
                 page.goto(url, wait_until='load', timeout=30000)
             
             # Wait for any dynamic content
-            page.wait_for_timeout(2000)
+            page.wait_for_timeout(2000)  # 2 second grace period
             
             html_content = page.content()
             
