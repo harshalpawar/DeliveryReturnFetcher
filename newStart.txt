@@ -12,3 +12,13 @@ OBJECTIVE - VERIFICATION & EXTRACTION PIPELINE FOR 24 + 10 BRANDS
 
 Done -
 Deepika Arora, Exhale Label, Torqadorn, Saadaa
+
+[ ] Code quality
+[ ] Documentation
+[ ] csv to csv
+[ ] edge case handling
+[ ] production ready pipeline
+[ ] handle failed brand fetches
+[ ] improve prompts
+[ ] push code
+[ ] test results
